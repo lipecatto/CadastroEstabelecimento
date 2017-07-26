@@ -1,0 +1,129 @@
+﻿@model IEnumerable<WebApplication1.Models.Estabelecimento>
+@using WebApplication1.Models
+
+
+@if (TempData["MensagemSucesso"] != null)
+{
+    <div class="alert alert-success alert-block">
+        @TempData["MensagemSucesso"]       
+    </div>
+}
+
+<div style="margin-top:1%;">
+    <a class="btn-success" href="@Url.Action("Create", "Estabelecimento")">
+       Adicionar
+    </a>
+ 
+</div>
+<div class="row-fluid">
+
+   
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"> <i class="icon-th"></i> </span>
+                <h5>Estabelecimentos</h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Nome Fantasia</th>
+                            <th>CNPJ</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Categoria</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="gradeA odd">
+                                
+                                <td class=" sorting_1">@item.Nome</td>
+
+                                <td class=" ">@item.NomeFantasia</td>
+
+                                <td class=" ">@item.Cnpj</td>
+
+                                <td class=" ">@item.Email</td>
+
+                                <td class=" ">@item.Telefone</td>
+
+                                <td class=" ">@item.Categoria.Descricao</td>
+
+                                
+                                @if (@item.Flg_Situacao)
+                                {
+                                    <td class=" ">Ativo </td>
+                                }
+                                else
+                                {
+                                    <td>Inativo</td>
+                                }  
+
+                                <td class="center ">
+                                    @Html.ActionLink("Editar", "Edit", new { Cod_Estabelecimento = @item.Cod_Estabelecimento })
+                                    <a href="#" data-href="delete.php?id=23" data-toggle="modal" data-target="#confirm-delete" onclick="ModalId(this,@item.Cod_Estabelecimento)">Excluir</a>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                ...
+            </div>
+            <div class="modal-body">
+                Deseja excluir estabelecimento ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <a class="btn btn-danger btn-ok" onclick="ModalExclude(@Model.ToJson(),deleteLinkId,'Delete','Estabelecimento')">Excluir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var deleteLinkObj;
+    var deleteLinkId;
+
+    // delete Link
+    function ModalId(element, id) {
+        debugger;
+        deleteLinkId = id;
+        deleteLinkObj = element;
+
+        $('#confirm-delete').show();    
+    }
+
+    function ModalExclude(model, codigo, action, controller) {
+        debugger;
+        var base_url = window.location.href.split('/')[0] + '//' + window.location.href.split('/')[2];
+      
+        var url = base_url + '/' + controller + '/' + action;
+
+            $.ajax({
+                type: "GET",
+                url: url,                        
+                data: {Cod_Estabelecimento:  codigo},
+                async: true
+            });
+
+            window.location.replace("/Estabelecimento/Index");
+               
+
+    }
+</script>
